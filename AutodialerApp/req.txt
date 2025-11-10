@@ -1,0 +1,21 @@
+# Ruby Autodialer Requirements
+
+## System Requirements
+- Ruby 3.2+
+- Bundler gem
+
+## Installation Steps
+1. Install Ruby from https://rubyinstaller.org/
+2. Install bundler: gem install bundler
+3. Clone/download this project
+4. Run: bundle install
+5. Copy env_example.txt to .env and fill in your API keys
+6. Run: ruby app.rb
+
+## API Keys Required
+- Twilio Account SID and Auth Token (from twilio.com)
+- Google Gemini API Key (from makersuite.google.com)
+
+## Testing
+- Use +1800 prefixed numbers for testing
+- These numbers are free to call with Twilio trial accounts

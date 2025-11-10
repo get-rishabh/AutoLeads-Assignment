@@ -1,0 +1,7 @@
+# API Configuration
+# Rename this file to .env and add your actual API key
+
+# Required: Gemini API Key (FREE!)
+# Get from: https://makersuite.google.com/app/apikey
+GEMINI_API_KEY=your_gemini_key_here
+

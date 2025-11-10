@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autodialer - AI Powered Calling System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            color: #555;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            resize: vertical;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .logs {
+            max-height: 400px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+        }
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            min-width: 120px;
+            margin: 5px;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .ai-prompt {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .ai-prompt input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .ai-prompt button {
+            background-color: rgba(255,255,255,0.2);
+            border: 1px solid white;
+        }
+        .ai-prompt button:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <h1>🤖 Autodialer - AI Powered Calling System</h1>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <a href="/blog" style="background-color: rgba(255,255,255,0.2); color: white; padding: 8px 16px; text-decoration: none; border-radius: 5px; display: inline-block;">📝 Visit Blog</a>
+    </div>
+
+    <div class="container ai-prompt">
+        <div class="section">
+            <h2>AI Voice Assistant</h2>
+            <p>Speak or type your commands. Examples: "make a call to +18001234567", "start calling uploaded numbers"</p>
+            <input type="text" id="aiPrompt" placeholder="Type your command here..." onkeypress="handleKeyPress(event)">
+            <button onclick="processAIPrompt()">Send Command</button>
+            <div id="aiResponse"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <h2>📱 Phone Number Management</h2>
+            <p>Paste up to 100 phone numbers (one per line or comma-separated). Use test numbers like +18001234567.</p>
+            <textarea id="phoneNumbers" placeholder="Example:
++18001234567
++18009876543
++18005551234"></textarea>
+            <br><br>
+            <button onclick="uploadContacts()">Upload Numbers</button>
+            <div id="uploadStatus"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <h2>📞 Call Management</h2>
+            <button onclick="startCalling()" id="startCallBtn">Start Calling All Numbers</button>
+            <div id="callStatus"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <h2>📊 Call Statistics</h2>
+            <div class="stats" id="stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="totalContacts">0</div>
+                    <div>Total Contacts</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="callsInitiated">0</div>
+                    <div>Calls Initiated</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="callsCompleted">0</div>
+                    <div>Calls Completed</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="callsFailed">0</div>
+                    <div>Calls Failed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <h2>📋 Call Logs</h2>
+            <button onclick="refreshLogs()">Refresh Logs</button>
+            <div class="logs" id="callLogs">
+                <p>No call logs yet. Upload numbers and start calling to see logs here.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let contacts = [];
+        let callLogs = [];
+
+        function showStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.className = `status ${type}`;
+            element.innerHTML = message;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                processAIPrompt();
+            }
+        }
+
+        async function processAIPrompt() {
+            const prompt = document.getElementById('aiPrompt').value.trim();
+            if (!prompt) return;
+
+            try {
+                const response = await fetch('/ai_prompt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `prompt=${encodeURIComponent(prompt)}`
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showStatus('aiResponse', result.message, 'success');
+
+                    // Handle different AI actions
+                    if (result.action === 'call' && result.phone_number) {
+                        // Add to contacts and call
+                        contacts = [result.phone_number];
+                        updateStats();
+                        startCalling();
+                    } else if (result.action === 'start_calling') {
+                        startCalling();
+                    }
+                } else {
+                    showStatus('aiResponse', result.error, 'error');
+                }
+            } catch (error) {
+                showStatus('aiResponse', 'Error processing AI prompt', 'error');
+            }
+        }
+
+        async function uploadContacts() {
+            const phoneNumbers = document.getElementById('phoneNumbers').value.trim();
+            if (!phoneNumbers) {
+                showStatus('uploadStatus', 'Please enter phone numbers', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/upload_contacts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `phone_numbers=${encodeURIComponent(phoneNumbers)}`
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    contacts = result.contacts;
+                    updateStats();
+                    showStatus('uploadStatus', `Successfully uploaded ${result.count} contacts`, 'success');
+                } else {
+                    showStatus('uploadStatus', result.error, 'error');
+                }
+            } catch (error) {
+                showStatus('uploadStatus', 'Error uploading contacts', 'error');
+            }
+        }
+
+        async function startCalling() {
+            if (contacts.length === 0) {
+                showStatus('callStatus', 'No contacts to call. Please upload numbers first.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('startCallBtn');
+            btn.disabled = true;
+            btn.textContent = 'Calling...';
+
+            try {
+                const response = await fetch('/start_calling', {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showStatus('callStatus', `Started calling ${result.total_contacts} contacts`, 'success');
+                } else {
+                    showStatus('callStatus', result.error, 'error');
+                }
+            } catch (error) {
+                showStatus('callStatus', 'Error starting calls', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Start Calling All Numbers';
+            }
+        }
+
+        async function refreshLogs() {
+            try {
+                const response = await fetch('/call_logs');
+                callLogs = await response.json();
+                updateStats();
+                displayLogs();
+            } catch (error) {
+                console.error('Error fetching logs:', error);
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalContacts').textContent = contacts.length;
+            document.getElementById('callsInitiated').textContent = callLogs.length;
+            document.getElementById('callsCompleted').textContent =
+                callLogs.filter(log => log.status === 'completed').length;
+            document.getElementById('callsFailed').textContent =
+                callLogs.filter(log => log.status === 'failed' || log.status === 'busy' || log.status === 'no-answer').length;
+        }
+
+        function displayLogs() {
+            const logsContainer = document.getElementById('callLogs');
+
+            if (callLogs.length === 0) {
+                logsContainer.innerHTML = '<p>No call logs yet.</p>';
+                return;
+            }
+
+            const logsHtml = callLogs.map(log => `
+                <div class="log-entry">
+                    <strong>${log.phone_number}</strong> - ${log.status}
+                    <br><small>${log.created_at}</small>
+                    ${log.error ? `<br><span style="color: red;">Error: ${log.error}</span>` : ''}
+                </div>
+            `).join('');
+
+            logsContainer.innerHTML = logsHtml;
+        }
+
+        // Auto-refresh logs every 5 seconds
+        setInterval(refreshLogs, 5000);
+
+        // Initialize
+        refreshLogs();
+    </script>
+</body>
+</html>

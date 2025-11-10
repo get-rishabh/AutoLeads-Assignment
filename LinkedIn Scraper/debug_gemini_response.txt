@@ -1,0 +1,38 @@
+```json
+{
+  "name": "Tushar Bhatia",
+  "headline": "SDE @Rippling | Ex-Gameskraft | Ex-Samsung | SIH@2022 Winner | VC Bronze Medalist @HBTU’24 | 4⭐Codechef| Specialist@Codeforces",
+  "location": "Bengaluru, Karnataka, India",
+  "about": "N/A",
+  "current_position": "SDE",
+  "current_company": "Rippling",
+  "experiences": [
+    {
+      "title": "SDE",
+      "company": "Rippling",
+      "duration": "N/A"
+    },
+    {
+      "title": "N/A",
+      "company": "Gameskraft",
+      "duration": "N/A"
+    },
+    {
+      "title": "N/A",
+      "company": "Samsung",
+      "duration": "N/A"
+    }
+  ],
+  "educations": [
+    {
+      "school": "Harcourt Butler Technical University",
+      "degree": "N/A",
+      "field": "N/A"
+    }
+  ],
+  "skills": [
+    "Codechef",
+    "Codeforces"
+  ]
+}
+```
